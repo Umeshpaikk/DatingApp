@@ -20,6 +20,7 @@ namespace API.Data
             var data = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json");
             var users = JsonSerializer.Deserialize<List<AppUser>>(data);
 
+            Console.WriteLine(data);
             var roles = new List<AppRole>
             {
                 new AppRole{Name = "Member"},
@@ -40,6 +41,9 @@ namespace API.Data
                 // user.PasswordSalt = hmac.Key;
                 await userManager.CreateAsync(user, "Dunda@123");
                 await userManager.AddToRoleAsync(user, "Member");
+
+                Console.WriteLine("USER:");
+                Console.WriteLine(user);
             }
 
             var adminUser = new AppUser
