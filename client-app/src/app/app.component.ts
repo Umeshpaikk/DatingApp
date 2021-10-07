@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { User } from './_Models/user';
+import { AccountService } from './_services/account.service';
+import { PresenceService } from './_services/presence.service';
 
 @Component({
   selector: 'app-root',
@@ -7,26 +10,25 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  AppTitle = 'Dating Application';
+  AppTitle = 'unable to load application';
   Users : any;
-  constructor(private http: HttpClient)  {
+  constructor(private accountservice : AccountService, private presenceservice: PresenceService)  {
 
   }
   ngOnInit(): void {
 
-    this.MakeWebCall();
+    this.setCurrentUser();
+
+ 
 
   }
 
-  MakeWebCall = () => {
-    this.http.get('https://localhost:5001/api/AppUser').subscribe(
-      response => {
-        this.Users = response;
-      },
-      error => {
-        console.log(error);
-      }
-    )
+  setCurrentUser(){
+    const user : User = JSON.parse(localStorage.getItem('user')!);
+    if(user){
+      this.accountservice.SetCurrentUser(user);
+      this.presenceservice.createHubConnection(user);
+    }
   }
-
+  
 }

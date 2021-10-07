@@ -1,8 +1,17 @@
-<h1>{{AppTitle}}</h1>
+<ngx-spinner>
+    loading .. ngx-spinner 
+</ngx-spinner>
 
-<ul>
-    <li *ngFor = 'let user of Users'>
-       <ol> {{user.id}} ------- {{user.userName}}  </ol> 
-    </li>
+<app-nav> </app-nav>
+
+<div class="container" style="margin-top: 100px">
+    <router-outlet></router-outlet>
+
+    <ul>
+        <li *ngFor = 'let user of Users'>
+           <ol> {{user.id}} ------- {{user.userName}}  </ol> 
+        </li>
+        
+    </ul>
     
-</ul>
+</div>

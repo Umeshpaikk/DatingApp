@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Data;
 using API.Extentions;
+using API.middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +47,7 @@ namespace API
             services.AddCors();
 
             services.AddIdentityServiceExtentions(_Config);
+            services.AddSignalR();
 
         }
 
@@ -58,20 +61,31 @@ namespace API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseCors(
-                policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")
+                policy => policy.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()             //for Signalr
+                .WithOrigins("https://localhost:4200")
             );
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapHub<MessageHub>("hubs/message");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
